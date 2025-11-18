@@ -60,7 +60,7 @@ Output Format:
 final_news_report_prompt = """#### Task
 Generate a concise and well-structured markdown report based on the given user query and retrieved search results. The report should synthesize key insights, highlight critical information, and present findings in a clear and actionable manner.
 
-Additionally, provide an extremely brief 1-2 line summary for each search result, mentioning its title first. These summaries should be enclosed within `<summary>` and `</summary>` tags. After all summaries, generate the final markdown report enclosed within `<final_markdown_report>` and `</final_markdown_report>` tags.
+Additionally, provide an extremely brief 1-2 line summary for each search result, mentioning its title first. These summaries should be enclosed  After all summaries, generate the final markdown report enclosed .
 
 The structure of the final report is not rigid and should be dynamically determined based on the user query. Sections and subsections should be organized logically to best present the information relevant to the query.
 
@@ -77,16 +77,16 @@ The structure of the final report is not rigid and should be dynamically determi
    ```
    "Title of the Search Result Page"
    Extremely brief summary of this search result page .
+   Make Summary formatised .
    ```
 
 2. **Final Markdown Report**
    - After presenting all search result summaries, generate the final markdown report.
    - The structure of the report should be dynamically determined based on the user query.
-   - Enclose the entire report within `<final_markdown_report>` and `</final_markdown_report>` tags.
+   - Enclose the entire report within .
    
    **Example Format:**
    ```
-   <final_markdown_report>
    # Title
    ## Relevant Section Based on Query
    ...
@@ -94,7 +94,6 @@ The structure of the final report is not rigid and should be dynamically determi
    ...
    ## Additional Insights
    ...
-   </final_markdown_report>
    ```
 
 #### Guidelines
