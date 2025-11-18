@@ -60,7 +60,7 @@ Output Format:
 final_news_report_prompt = """#### Task
 Generate a concise and well-structured markdown report based on the given user query and retrieved search results. The report should synthesize key insights, highlight critical information, and present findings in a clear and actionable manner.
 
-Additionally, provide an extremely brief 1-2 line summary for each search result, mentioning its title first. These summaries should be enclosed  After all summaries, generate the final markdown report enclosed .
+Additionally, provide an extremely brief 200 words  summary for main query, mentioning its title first. Summary should be formatised and maintain the context of main query.
 
 The structure of the final report is not rigid and should be dynamically determined based on the user query. Sections and subsections should be organized logically to best present the information relevant to the query.
 
@@ -69,21 +69,21 @@ The structure of the final report is not rigid and should be dynamically determi
 - **Search Results**: The retrieved information from the search process.
 
 #### Output Structure
-1. **Summaries of Search Results**
-   - Each search result summary should start with its title.
-   - Provide an extremely brief (1-2 line) summary for each result.
+1. **Overview**
+   - Summary should be formatted and well be in context of main query.
+   - Do NOT use any special tags or markers like `<summary>` or '</summary>`
    
    **Example Format:**
    ```
-   "Title of the Search Result Page"
-   Extremely brief summary of this search result page .
-   Make Summary formatised .
+   # Description
+   Extremely brief summary which are generated in 300 words .
    ```
 
 2. **Final Markdown Report**
    - After presenting all search result summaries, generate the final markdown report.
    - The structure of the report should be dynamically determined based on the user query.
-   - Enclose the entire report within .
+   - Introduction in final report should be around 300 words. 
+   - Do NOT use any special tags or markers like <final_markdown_report> or </final_markdown_report>
    
    **Example Format:**
    ```
@@ -94,6 +94,7 @@ The structure of the final report is not rigid and should be dynamically determi
    ...
    ## Additional Insights
    ...
+
    ```
 
 #### Guidelines
@@ -114,6 +115,7 @@ The structure of the final report is not rigid and should be dynamically determi
 4. **Conclusion**
    - Summarize key takeaways succinctly.
    - Reinforce the significance of findings in relation to the user's query.
+
 
 #### Output Format
 - The final report should be formatted in **Markdown**.
