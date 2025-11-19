@@ -1,0 +1,23 @@
+
+
+get_relevent_query_url : 'http://127.0.0.1:8000/api/search/relevant_queries'
+
+web_data_fetch_url : 'http://127.0.0.1:8000/api/web/fetch'
+
+search_duckduck_go_url : 'http://127.0.0.1:8000/api/search/web/'
+
+summarize_output_url: 'http://127.0.0.1:8000/api/final-report'
+
+analysis_output_url: 'http://127.0.0.1:8000/api/analysis'
+
+verifier_output_url: 'http://127.0.0.1:8000/api/verifier'
+
+create_session_url: 'http://127.0.0.1:8000/session/create-session'
+
+get_chat_history_url: 'http://127.0.0.1:8000/session/{session}/history'
+
+add_message_url : 'http://127.0.0.1:8000/session/{session}/message'
+
+search_vector_db_url : "http://127.0.0.1:8000/api/search_in_vectorstore"
+
+store_vector_db_url : "http://127.0.0.1:8000/api/store_in_vectorstore"

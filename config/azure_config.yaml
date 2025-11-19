@@ -1,0 +1,10 @@
+
+
+careed_db: careerdb
+AZURE_OPENAI_ENDPOINT : ""
+AZURE_OPENAI_KEY : ""
+DEPLOYMENT_NAME : gpt-4o
+AZURE_TEXT_OPENAI_VERSION: 2024-05-01-preview
+fetch_latest_job_news_url : "https://news.google.com/rss/search?q={}+jobs"
+HUGGIN_FACE : "" #token
+PROVIDE : "azure"
