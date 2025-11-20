@@ -10,7 +10,8 @@ utils_path = Path.cwd().parent / "src" / "utils"
 if str(utils_path) not in sys.path:
     sys.path.insert(0, str(utils_path))
 
-from zilliz_vectorstore import search_in_vector_store
+# from zilliz_vectorstore import search_in_vector_store
+from milvus_vectorstore import search_in_vector_store
 
 router = APIRouter()
 
