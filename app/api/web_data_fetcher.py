@@ -11,17 +11,24 @@ if str(utils_path) not in sys.path:
 
 from duckduckgo_search import DuckDuckGo
 
-router = APIRouter()
 
+router = APIRouter()
 class SearchRequest(BaseModel):
     url: List[str]
     query: str
 
-@router.post("/web/fetch", tags=["search"], summary="Fetch web data through api and summarize")
+async def fetch_web_data(urls: List[str], query: str) -> Any:
+    duck_obj = DuckDuckGo()
+    try:
+        results = await duck_obj.fetch_web_data(urls, query)
+        return results
+    except Exception as e:
+        raise RuntimeError(f"Failed to fetch web data: {e}")
+
+@router.post("/web/fetch", tags=["search"], summary="Fetch web data through API and summarize")
 async def search_web(request: SearchRequest = Body(...)):
     try:
-        duck_obj = DuckDuckGo()
-        search_results = await duck_obj.fetch_web_data(request.url,request.query )
-        return search_results 
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Search failed: {e}")
+        search_results = await fetch_web_data(request.url, request.query)
+        return search_results
+    except RuntimeError as e:
+        raise HTTPException(status_code=500, detail=str(e))

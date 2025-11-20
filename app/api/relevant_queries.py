@@ -21,60 +21,50 @@ from lite_llm_client import create_chat_model
 
 router = APIRouter()
 
-
 class SearchQueryBody(BaseModel):
     query: str
     max_query_generation: int = 3
     previous_query_generated: Optional[List[str]] = None
 
+async def generate_queries_logic(user_query: str, max_gen: int, previous_queries: Optional[List[str]]):
+    current_date = datetime.today().strftime("%d %B %Y")
+    connection_status = create_chat_model()
+
+    if not connection_status.get('status'):
+        raise RuntimeError("Unable to connect to LLM model")
+
+    llm = connection_status['model']
+
+    if not previous_queries:
+        system_msg = SystemMessage(content=generate_search_queries_system_prompt)
+        human_msg = HumanMessage(content=generate_search_queries_prompt.format(
+            user_query=user_query,
+            current_date=current_date,
+            MAX_QUERY_GENERATIONS=max_gen,
+        ))
+    else:
+        system_msg = SystemMessage(content=generate_alternative_search_queries_system_prompt)
+        human_msg = HumanMessage(content=generate_alternative_search_queries_prompt.format(
+            user_query=user_query,
+            previous_queries="\n".join(previous_queries),
+            MAX_QUERY_GENERATIONS=max_gen
+        ))
+
+    response = llm.invoke([system_msg, human_msg])
+    refined_queries = [
+        q.strip().strip("'\"").strip("-").strip()
+        for q in response.content.split("\n")
+        if q and q.lower() != "none"
+    ]
+    return refined_queries[:max_gen]
 
 @router.post("/search/relevant_queries", tags=["LLM Search"], summary="Generate relevant search queries",
              description="Generates relevant search queries based on user input using Huggingface LLM.")
 async def generate_relevant_queries(payload: SearchQueryBody = Body(...)):
     try:
-        user_query = payload.query
-        max_gen = payload.max_query_generation
-        previous_queries = payload.previous_query_generated
-
-        current_date = datetime.today().strftime("%d %B %Y")
-        connection_status = create_chat_model()
-
-        if not connection_status.get('status'):
-            raise HTTPException(status_code=503, detail="Unable to connect to LLM model")
-
-        llm = connection_status['model']
-        if not previous_queries:
-            system_msg = SystemMessage(content=generate_search_queries_system_prompt)
-            human_msg = HumanMessage(content=generate_search_queries_prompt.format(
-                    user_query=user_query,
-                    current_date=current_date,
-                    MAX_QUERY_GENERATIONS=max_gen,
-                ))
-            response=llm.invoke([system_msg, human_msg])
-
-            refined_queries = [
-                q.strip().strip("'\"").strip("-").strip()
-                for q in response.content.split("\n")
-                if q and q.lower() != "none"
-            ]
-            refined_search_queries = refined_queries[:max_gen]
-            return {"generated_queries": refined_search_queries}
-        else:
-            system_msg = SystemMessage(content=generate_alternative_search_queries_system_prompt)
-            human_msg = HumanMessage(content=generate_alternative_search_queries_prompt.format(
-                user_query=user_query,
-                previous_queries="\n".join(previous_queries),
-                MAX_QUERY_GENERATIONS=max_gen
-            ))
-            response = llm.invoke([system_msg, human_msg])
-            refined_queries = [
-                q.strip().strip("'\"").strip("-").strip()
-                for q in response.content.split("\n")
-                if q and q.lower() != "none"
-            ]
-            refined_search_queries = refined_queries[:max_gen]
-            return {"generated_queries": refined_search_queries}
+        generated_queries = await generate_queries_logic(payload.query, payload.max_query_generation, payload.previous_query_generated)
+        return {"generated_queries": generated_queries}
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error to fetch relevant query: {e}")
-
-   

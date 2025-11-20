@@ -19,11 +19,6 @@ def get_relevent_query(state):
         state['relevent_query']= res.json()['generated_queries']
         state["relevent_query_operation_status"] =True
         state['all_relevant_query']  = res.json()['generated_queries']
-        # if state['refinement_count'] == 0: 
-        #     state['all_relevant_query']= res.json()
-        # else:
-        #     state['all_relevant_query'].extend(res.json())
-
         return state
     else:
         state["relevent_query_operation_status"] =False

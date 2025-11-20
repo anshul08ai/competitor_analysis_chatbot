@@ -13,21 +13,7 @@ from duckduckgo_search import DuckDuckGo
 
 router = APIRouter()
 
-# class SearchRequest(BaseModel):
-#     query: str
-#     max_url: int =3
 
-# @router.post("/search/duckduckgo", tags=["search"], summary="News search with publish date")
-# async def search_news(request: SearchRequest = Body(...)):
-#     try:
-#         duck_obj = DuckDuckGo()
-#         search_results=duck_obj.search_duckduckgo(request.query )
-#         return search_results 
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail=f"Search failed: {e}")
-
-###### ASYNCHRONOUS #########
- 
 class SearchRequest(BaseModel):
     query: str
  

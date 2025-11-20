@@ -32,8 +32,6 @@ if str(prompt_path) not in sys.path:
 from prompt_template import analysis_result_content_prompt
 from lite_llm_client import create_chat_model
 from prompt_template import final_news_report_prompt,final_news_report_system_prompt
-from lite_llm_client import create_chat_model
-
 
 router = APIRouter()
 
@@ -119,40 +117,39 @@ class AnlysisContentBody(BaseModel):
     url_with_summary: Any 
     with_summarize: bool = False
 
+async def perform_analysis(user_query: str, url_with_summary: Any, with_summarize: bool):
+    analysis_prompt = analysis_result_content_prompt.format(
+        main_query=user_query,
+        documents_with_urls=str(url_with_summary)
+    )
+    connection_status = create_chat_model()
+
+    if not connection_status.get('status'):
+        raise RuntimeError("Unable to connect to LLM model")
+
+    llm = connection_status['model']
+    structured_output = llm.invoke(analysis_prompt)
+
+    if with_summarize:
+        try:
+            system_msg = SystemMessage(content=final_news_report_system_prompt)
+            human_msg = HumanMessage(content=final_news_report_prompt.format(
+                user_query=user_query,
+                search_results=str(structured_output)
+            ))
+            summarized_content = llm.invoke([system_msg, human_msg])
+            structured_output.summary = summarized_content.content
+        except Exception:
+            pass
+
+    return structured_output
 
 @router.post("/analysis/", tags=["Analysis"], summary="Analysis data with query")
 async def analysis_content(payload: AnlysisContentBody = Body(...)):
     try:
-        user_query = payload.query
-        url_with_summary = payload.url_with_summary
-        with_summarize=payload.with_summarize
-                
-        analysis_prompt=analysis_result_content_prompt.format(
-                main_query=user_query,
-                documents_with_urls=str(url_with_summary)
-            )
-        connection_status = create_chat_model()
-
-        if not connection_status.get('status'):
-            raise HTTPException(status_code=503, detail="Unable to connect to LLM model")
-
-        llm = connection_status['model']
-        structured_output=llm.invoke(analysis_prompt)
-        # structured_llm=llm.with_structured_output(AnalysisModel)
-        # structured_output=structured_llm.invoke(analysis_prompt)
-        if with_summarize:
-            try:
-                system_msg = SystemMessage(content=final_news_report_system_prompt)
-                human_msg = HumanMessage(content=final_news_report_prompt.format(user_query=user_query, search_results=str(structured_output)))
-                summarized_content=llm.invoke([system_msg, human_msg])
-                structured_output.summary=summarized_content.content
-                return structured_output
-            except Exception as e:
-                return structured_output
-        else:
-            return structured_output
+        result = await perform_analysis(payload.query, payload.url_with_summary, payload.with_summarize)
+        return result
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
     except Exception as e:
-        print('eeeeeeeeeee analysis error',e)
-        raise HTTPException(status_code=500, detail=f"Error to fetch relevant query: {e}")
-
-   
+        raise HTTPException(status_code=500, detail=f"Error during analysis: {e}")

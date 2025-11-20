@@ -23,24 +23,25 @@ router = APIRouter()
 
 class SummarizationNewsRequest(BaseModel):
     query: str
-    search_results:Any
+    search_results: Any
+
+async def perform_news_summarization(query: str, search_results: Any) -> str:
+    connection_status = create_chat_model()
+    if not connection_status.get('status'):
+        raise RuntimeError("Unable to connect to LLM model")
+    
+    llm = connection_status['model']
+    system_msg = SystemMessage(content=final_news_report_system_prompt)
+    human_msg = HumanMessage(content=final_news_report_prompt.format(user_query=query, search_results=search_results))
+    summarized_content = llm.invoke([system_msg, human_msg])
+    return summarized_content.content
 
 @router.post("/final-report", tags=["summarization"], summary="Summarize text news content")
 async def news_summarize(request: SummarizationNewsRequest = Body(...)) -> dict:
     try:
-        """
-        Summarizes news content based on user query and search results.
-        """
-        connection_status = create_chat_model()
-
-        if not connection_status.get('status'):
-            raise HTTPException(status_code=503, detail="Unable to connect to LLM model")
-
-        llm = connection_status['model']
-
-        system_msg = SystemMessage(content=final_news_report_system_prompt)
-        human_msg = HumanMessage(content=final_news_report_prompt.format(user_query=request.query, search_results=request.search_results))
-        summarized_content=llm.invoke([system_msg, human_msg])
-        return {"summary": summarized_content.content}
+        summary = await perform_news_summarization(request.query, request.search_results)
+        return {"summary": summary}
+    except RuntimeError as e:
+        raise HTTPException(status_code=503, detail=str(e))
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Search failed: {e}")
+        raise HTTPException(status_code=500, detail=f"Summarization failed: {e}")
