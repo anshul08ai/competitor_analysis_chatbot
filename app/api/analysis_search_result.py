@@ -117,7 +117,7 @@ class AnalysisModel(BaseModel):
 class AnlysisContentBody(BaseModel):
     query: str
     url_with_summary: Any 
-    with_summarize: bool = True
+    with_summarize: bool = False
 
 
 @router.post("/analysis/", tags=["Analysis"], summary="Analysis data with query")
@@ -137,8 +137,9 @@ async def analysis_content(payload: AnlysisContentBody = Body(...)):
             raise HTTPException(status_code=503, detail="Unable to connect to LLM model")
 
         llm = connection_status['model']
-        structured_llm=llm.with_structured_output(AnalysisModel)
-        structured_output=structured_llm.invoke(analysis_prompt)
+        structured_output=llm.invoke(analysis_prompt)
+        # structured_llm=llm.with_structured_output(AnalysisModel)
+        # structured_output=structured_llm.invoke(analysis_prompt)
         if with_summarize:
             try:
                 system_msg = SystemMessage(content=final_news_report_system_prompt)
@@ -151,6 +152,7 @@ async def analysis_content(payload: AnlysisContentBody = Body(...)):
         else:
             return structured_output
     except Exception as e:
+        print('eeeeeeeeeee analysis error',e)
         raise HTTPException(status_code=500, detail=f"Error to fetch relevant query: {e}")
 
    

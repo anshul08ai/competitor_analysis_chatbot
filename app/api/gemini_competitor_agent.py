@@ -20,7 +20,7 @@ compiled = agent_graph.compile()
 class SearchRequest(BaseModel):
     query: str
 
-@router.post("/gemini/competitor", tags=["search"], summary="Deep search agent")
+@router.post("/gemini/competitor", tags=["LLM"], summary="Deep search agent")
 async def search_web(request: SearchRequest = Body(...)):
     try:
         ouptut =compiled.invoke({'query':request.query})
