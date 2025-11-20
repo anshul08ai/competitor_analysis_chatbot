@@ -22,17 +22,17 @@ def call_api(url, query):
         return {}
 
 
-def perform_multithreaded_api_calls(api_calls,query):
-    results = []
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        futures = [executor.submit(call_api, url,query) for url in api_calls]
-        for future in as_completed(futures):
-            try:
-                result = future.result()
-                results.append(result)
-            except Exception as e:
-                results.append({"error": str(e)})
-    return results
+# def perform_multithreaded_api_calls(api_calls,query):
+#     results = []
+#     with ThreadPoolExecutor(max_workers=5) as executor:
+#         futures = [executor.submit(call_api, url,query) for url in api_calls]
+#         for future in as_completed(futures):
+#             try:
+#                 result = future.result()
+#                 results.append(result)
+#             except Exception as e:
+#                 results.append({"error": str(e)})
+#     return results
 
 
 def web_data_fetch(state):
@@ -40,6 +40,6 @@ def web_data_fetch(state):
     web_urls=state['web_urls']
     # res=requests.post(web_data_fetch_url,json={'query':query})
     # if res.status_code ==200:
-    state['data_for_summarize']= perform_multithreaded_api_calls(web_urls,query)
+    state['data_for_summarize']= call_api(web_urls,query)
     state["web_data_fetch_status"] =True
     return state

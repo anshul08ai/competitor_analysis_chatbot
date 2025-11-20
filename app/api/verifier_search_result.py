@@ -123,18 +123,6 @@ async def verify_content(payload: VerifierContentBody = Body(...)):
         system_msg = SystemMessage(content=verifier_report_system_prompt)
         human_msg = HumanMessage(content=verifier_prompt)
         summarized_content=llm.invoke([system_msg, human_msg])
-        # structured_llm=llm.with_structured_output(AnalysisModel)
-        # llm_output=llm.invoke([system_msg, human_msg])
-        # if with_summarize:
-        #     try:
-        #         system_msg = SystemMessage(content=final_news_report_system_prompt)
-        #         human_msg = HumanMessage(content=final_news_report_prompt.format(user_query=user_query, search_results=str(structured_output)))
-        #         summarized_content=llm.invoke([system_msg, human_msg])
-        #         structured_output.summary=summarized_content.content
-        #         return structured_output
-        #     except Exception as e:
-        #         return structured_output
-        # else:
         return summarized_content
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error to fetch relevant query: {e}")

@@ -1,6 +1,7 @@
 from typing import TypedDict,Literal,Annotated,List, Any, Optional, Dict
 from langchain_core.messages import BaseMessage
 import operator
+from langgraph.graph.message import add_messages
 
 class State(TypedDict):
     messages: List[BaseMessage]
@@ -48,5 +49,5 @@ class State(TypedDict):
 
     # refinement url & summarize data
     data_for_summarize : Optional[Any]
-    web_urls:Annotated[List[str],operator.add]
+    web_urls:List[str]= []
     web_data_fetch_status: Literal[True,False] =False 

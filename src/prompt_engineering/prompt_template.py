@@ -13,18 +13,18 @@ Output Format:
 - Provide each search query on a new line, without numbering, bullet points, or any list formatting.
 - Do NOT use "1.", "2.", "1)", or any other form of enumeration.
 Example (Incorrect Format):
-1. Artificial Intelligence definition
-2. What is the meaning of Artificial Intelligence
-3. Explain Artificial Intelligence technology
+1. List Google’s top competitors in AI
+2. What companies compete with Google in search?
+3. Who are the competitors of Microsoft Azure?
 
 Example (Correct Format):
-Artificial Intelligence definition
-What is the meaning of Artificial Intelligence
-Explain Artificial Intelligence technology
+List Google’s top competitors in AI
+What companies compete with Google in search?
+Who are the competitors of Microsoft Azure?
 
 """
 
-generate_search_queries_system_prompt="""You are a helpful assistant that don't give reply in Output Format:
+generate_search_queries_system_prompt="""You are a helpful competitor analizer assistant that don't give reply in Output Format:
 - Provide each search query on a new line without any additional text, explanations, or headers or line number.
 - Do no give triple backticks or any other formatting, just the query itself.
 - Provide each search query on a new line, without numbering, bullet points, or any list formatting.
@@ -71,12 +71,12 @@ The structure of the final report is not rigid and should be dynamically determi
 #### Output Structure
 1. **Summaries of Search Results**
    - Each search result summary should start with its title.
-   - Provide an extremely brief (1-2 line) summary for each result.
+   - Provide an extremely brief (3-5 line) summary for each result.
    
    **Example Format:**
    ```
    "Title of the Search Result Page"
-   Extremely brief summary of this search result page .
+   Extremely brief summary of this search result page.
    Make Summary formatised .
    ```
 
@@ -117,6 +117,7 @@ The structure of the final report is not rigid and should be dynamically determi
 
 #### Output Format
 - The final report should be formatted in **Markdown**.
+- Keep information as much as possible like minimum 10000 words
 - Use appropriate **headings, bullet points, and code blocks** (if necessary) for clarity.
 - Ensure the content is structured, professional, and to the point, avoiding unnecessary details.
 - Present search result summaries first, followed by the dynamically structured final report.
@@ -385,3 +386,22 @@ Your goals:
 Previous conversation: {chat_history}
 Query: {user_query}
 """
+
+
+web_data_pre_validate_prompt="""You are an expert Validation and Fact-Quality Checker.
+Your job is to evaluate the QUALITY, RELEVANCE, and FACTUAL SOUNDNESS
+of a single webpage summary based on the user's query.
+You must strictly validate the following:
+1. Relevance:
+  - Is the summary related to the user query?
+  - Is the content meaningful and not boilerplate text?
+2. Factual Soundness:
+  - Is the summary free from hallucinations?
+  - Does it correctly represent the webpage text?
+3. Completeness:
+  - Does it capture the main points of the webpage?
+4. Noise Removal:
+  - If the webpage contains ads, menus, navigation, etc –
+    the summary must ignore them.
+You must NOT generate any new content.
+You must only evaluate the summary that is provided."""
