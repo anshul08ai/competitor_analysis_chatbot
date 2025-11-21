@@ -10,7 +10,8 @@ utils_path = Path.cwd().parent / "src" / "utils"
 if str(utils_path) not in sys.path:
     sys.path.insert(0, str(utils_path))
 
-from zilliz_vectorstore import search_in_vector_store
+# from zilliz_vectorstore import search_in_vector_store
+from milvus_vectorstore import search_in_vector_store
 
 router = APIRouter()
 
@@ -21,7 +22,6 @@ async def search_in_vectorstore( query: dict = Body(..., description="search dat
     """
     try:
         status = await search_in_vector_store(query['query'])
-        print(status,'vvvvvvvvvvvvv')
         # if not status:
         #     raise HTTPException(status_code=200, detail="No relevant documents found in vector store.")
         return {'data':status}
