@@ -34,6 +34,7 @@ class AgentGraph:
         from agents.need_refinement import needs_refinement_status
         from agents.refine_search_summarize_data import web_data_fetch
         from agents.vector_database_agent.data_fetch_via_db import db_data_fetch
+        from agents.vector_database_agent.data_store_in_vector_db import store_data_in_vcdb
 
         self.graph.add_node("router", router)
         self.graph.add_node("llm_chat_bot", llm_chat_bot)
@@ -44,6 +45,7 @@ class AgentGraph:
         self.graph.add_node("summarize_report", generate_summarize_report)
         self.graph.add_node("web_data_scrap", web_data_fetch)
         self.graph.add_node("similar_db_data", db_data_fetch)
+        self.graph.add_node("store_data_in_vcdb", store_data_in_vcdb)
 
     def _setup_edges(self):
         self.graph.add_edge(START, 'router')
@@ -57,7 +59,8 @@ class AgentGraph:
         self.graph.add_edge("web_data_scrap", "similar_db_data")
         self.graph.add_edge("similar_db_data", "analyze_generated_data")
         self.graph.add_edge("analyze_generated_data", "summarize_report")
-        self.graph.add_edge("summarize_report", END)
+        self.graph.add_edge("summarize_report", "store_data_in_vcdb")
+        self.graph.add_edge("store_data_in_vcdb", END)
 
     @staticmethod
     def get_router(state):

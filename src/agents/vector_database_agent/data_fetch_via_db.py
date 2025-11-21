@@ -5,7 +5,6 @@ from pathlib import Path
 import yaml
 
 CONFIG_PATH = Path(__file__).parent.parent.parent.parent  / 'config' / 'all_urls.yaml'
-# CONFIG_PATH = Path(__file__).parent.parent.parent.parent  / 'config' / 'all_urls.yaml'
 
 def load_all_urls_config():
     with CONFIG_PATH.open('r') as f:
@@ -20,19 +19,7 @@ def call_api(query):
         response = requests.post(db_data_fetch_url, json={'query':query})
         return response.json()
     except Exception as e:
-        return {}
-
-# def perform_multithreaded_api_calls(api_calls,query):
-#     results = []
-#     with ThreadPoolExecutor(max_workers=5) as executor:
-#         futures = [executor.submit(call_api, url,query) for url in api_calls]
-#         for future in as_completed(futures):
-#             try:
-#                 result = future.result()
-#                 results.append(result)
-#             except Exception as e:
-#                 results.append({"error": str(e)})
-#     return results
+        return ''
 
 def db_data_fetch(state):
     sub_queries=list(state['query'])
@@ -40,5 +27,8 @@ def db_data_fetch(state):
     all_queires = "  ".join(sub_queries)
     content = call_api(all_queires)
     state['relevent_query_rag_data'] = content['data']
-    state["web_data_fetch_status"] =True
+    if state['relevent_query_rag_data'] == '':
+        state["relevent_query_rag_data_status"] =False
+    else: 
+        state["relevent_query_rag_data_status"] =True
     return state

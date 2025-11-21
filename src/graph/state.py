@@ -24,8 +24,13 @@ class State(TypedDict):
     verifier_output_status: Literal[True,False] =False
 
     #rag_collected_data
-    relevent_query_rag_data: str
+    relevent_query_rag_data: Any
+    relevent_query_rag_data_status : Literal[True,False] =False
+    store_data_in_vcdb : Any
+    store_data_in_vcdb_status: Literal[True,False] =False
+
     refined_query_rag_data: str
+
 
     # all_data
     all_relevant_query: Optional[List[str]]

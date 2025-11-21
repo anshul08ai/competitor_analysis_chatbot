@@ -6,7 +6,7 @@ from pymilvus import (
 )
 import asyncio
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-from azure_client import connect_azure_embedding  
+from google_embedding_client import connect_gemini_embedding
 import yaml
 from pathlib import Path
 
@@ -22,8 +22,8 @@ MILVUS_PORT = milvus_config["MILVUS_PORT"]
 MILVUS_DATABASE = milvus_config["MILVUS_DATABASE"]  
 
 # Collection & embedding parameters
-COLLECTION_NAME = "deep_research_documents"
-EMBED_DIM = 1536
+COLLECTION_NAME = "deep_research_competitor_analysis"
+EMBED_DIM = 3072
 
 
 import numpy as np
@@ -117,10 +117,10 @@ class MilvusVectorStore:
 
 async def store_in_vector_store(input_text):
     try:
-        azure_embedding = connect_azure_embedding()
-        embeddings_model = azure_embedding['model'] if azure_embedding['status'] else None
+        gemini_embedding = connect_gemini_embedding()
+        embeddings_model = gemini_embedding['model'] if gemini_embedding['status'] else None
         if embeddings_model is None:
-            raise Exception("Failed to connect to Azure Embedding model.")
+            raise Exception("Failed to connect to Gemini Embedding model.")
 
         # Split input into chunks
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
@@ -144,8 +144,11 @@ async def store_in_vector_store(input_text):
 # Async search function
 async def search_in_vector_store(user_input, top_k=5, similarity_threshold=0.5):
     try:
-        azure_embedding = connect_azure_embedding()
-        embeddings_model = azure_embedding["model"]
+        gemini_embedding = connect_gemini_embedding()
+        embeddings_model = gemini_embedding["model"] if gemini_embedding["status"] else None
+        if embeddings_model is None:
+            raise Exception("Failed to connect to Gemini Embedding model.")
+
         store = MilvusVectorStore()
 
         query_embedding = embeddings_model.embed_query(user_input)
