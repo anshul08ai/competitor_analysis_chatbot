@@ -1,12 +1,14 @@
-from fastapi import APIRouter, Body, HTTPException
+from fastapi import APIRouter, Body, HTTPException,Request
 from services.gemini_competitor import SearchRequest,perform_agent_graph_search
+from utils.logging_engine import setup_logger
 
 
 router = APIRouter()
 @router.post("/gemini/competitor", tags=["LLM"], summary="Deep search agent")
-async def search_web(request: SearchRequest = Body(...)):
+async def search_web(request: Request,payload: SearchRequest = Body(...)):
     try:
-        result = await perform_agent_graph_search(request.query)
+        loggin_obj =setup_logger('llm_main',request.state.logging_path)
+        result = await perform_agent_graph_search(payload.query,loggin_obj)
         return result
     except RuntimeError as e:
         raise HTTPException(status_code=500, detail=str(e))

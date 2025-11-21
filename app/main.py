@@ -2,8 +2,9 @@
 from pathlib import Path
 import sys
 
-from fastapi import FastAPI
+from fastapi import FastAPI,Request
 from fastapi import Depends
+from datetime import datetime
 
 from fastapi import FastAPI
 
@@ -29,6 +30,19 @@ app = FastAPI(
     description="Competitor Analysis Project",
     version="1.0.0"
 )
+
+
+logging_path=r'f:\capstone_project2\src\logs'
+
+app = FastAPI()
+
+@app.middleware("http")
+async def add_state_to_request(request: Request, call_next):
+    url = str(request.url)  # Gets full URL of the incoming request
+    timestamp = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
+    request.state.logging_path = logging_path+'\\'+timestamp+'.log'
+    response = await call_next(request)
+    return response
 
 
 app.include_router(relevant_queries.router, prefix="/api", tags=["Relevant Queries"])

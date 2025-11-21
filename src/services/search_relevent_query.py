@@ -1,7 +1,7 @@
 
 from langchain_core.messages import SystemMessage, HumanMessage
 from pydantic import BaseModel
-from typing import List,Optional
+from typing import List,Optional,Any
 from datetime import datetime
 
 
@@ -13,9 +13,10 @@ class SearchQueryBody(BaseModel):
     max_query_generation: int = 3
     previous_query_generated: Optional[List[str]] = None
 
-async def generate_queries_logic(user_query: str, max_gen: int, previous_queries: Optional[List[str]]):
+async def generate_queries_logic(user_query: str,logger_obj: Any, max_gen: int, previous_queries: Optional[List[str]]):
     current_date = datetime.today().strftime("%d %B %Y")
     connection_status = create_chat_model()
+    logger_obj.info('Start operation')
 
     if not connection_status.get('status'):
         raise RuntimeError("Unable to connect to LLM model")
@@ -43,4 +44,5 @@ async def generate_queries_logic(user_query: str, max_gen: int, previous_queries
         for q in response.content.split("\n")
         if q and q.lower() != "none"
     ]
+    logger_obj.warning('end')
     return refined_queries[:max_gen]
