@@ -118,7 +118,7 @@ The structure of the final report is not rigid and should be dynamically determi
 
 #### Output Format
 - The final report should be formatted in **Markdown**.
-- Keep information as much as possible like minimum 2000 words and max 5000 words.
+- Keep information as much as possible like minimum 100 words and max 5000 words.
 - Use appropriate **headings, bullet points, and code blocks** (if necessary) for clarity.
 - Ensure the content is structured, professional, and to the point, avoiding unnecessary details.
 - Present search result summaries first, followed by the dynamically structured final report.
