@@ -21,8 +21,8 @@ async def search_multi(request: Request,payload: MultiSearchRequest):
         tasks = [duck.search_duckduckgo(q) for q in payload.queries]
         results = await asyncio.gather(*tasks)
         flat_list = [item for sublist in results for item in sublist]
-        loggin_obj.info(f'/search/web/ API output {flat_list}')
+        loggin_obj.info(f'/search/web/ wokrded well ')
         return flat_list
     except Exception as e:
-        loggin_obj.error(f"Parallel search failed: {e}")
-        raise HTTPException(500, f"Parallel search failed: {e}")
+        loggin_obj.error(f"Parallel search failed: {str(e)}")
+        raise HTTPException(500, f"Parallel search failed: {str(e)}")
