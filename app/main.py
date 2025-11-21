@@ -38,8 +38,10 @@ app = FastAPI()
 
 @app.middleware("http")
 async def add_state_to_request(request: Request, call_next):
-    url = str(request.url)  # Gets full URL of the incoming request
-    timestamp = datetime.utcnow().strftime("%Y-%m-%d_%H-%M-%S")
+    url = str(request.url) 
+    print(url)
+    timestamp = datetime.utcnow().replace(second=0, microsecond=0)
+    timestamp = timestamp.strftime("%Y-%m-%d_%H-%M-%S")
     request.state.logging_path = logging_path+'\\'+timestamp+'.log'
     response = await call_next(request)
     return response
