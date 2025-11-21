@@ -1,0 +1,25 @@
+
+from langchain_core.messages import SystemMessage, HumanMessage
+from pydantic import BaseModel
+
+from typing import Any
+
+from prompt_engineering.prompt_template import final_news_report_prompt,final_news_report_system_prompt
+from llm.lite_llm_client import create_chat_model
+
+
+
+class SummarizationNewsRequest(BaseModel):
+    query: str
+    search_results: Any
+
+async def perform_summarization(query: str, search_results: Any) -> str:
+    connection_status = create_chat_model()
+    if not connection_status.get('status'):
+        raise RuntimeError("Unable to connect to LLM model")
+    
+    llm = connection_status['model']
+    system_msg = SystemMessage(content=final_news_report_system_prompt)
+    human_msg = HumanMessage(content=final_news_report_prompt.format(user_query=query, search_results=search_results))
+    summarized_content = llm.invoke([system_msg, human_msg])
+    return summarized_content.content

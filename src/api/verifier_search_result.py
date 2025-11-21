@@ -21,16 +21,8 @@ url_config = load_all_urls_config()
 summarize_output_url =url_config['summarize_output_url']
 
 
-utils_path = Path.cwd().parent / "src" / "llm"
-if str(utils_path) not in sys.path:
-    sys.path.insert(0, str(utils_path))
-
-prompt_path = Path.cwd().parent / "src" / "prompt_engineering"
-if str(prompt_path) not in sys.path:
-    sys.path.insert(0, str(prompt_path))
-
-from prompt_template import verifier_result_content_prompt,verifier_report_system_prompt
-from lite_llm_client import create_chat_model
+from prompt_engineering.prompt_template import verifier_result_content_prompt,verifier_report_system_prompt
+from llm.lite_llm_client import create_chat_model
 # from prompt_template import final_news_report_prompt,final_news_report_system_prompt
 # from lite_llm_client import create_chat_model
 

@@ -2,7 +2,8 @@ from langgraph.graph import StateGraph,START,END
 from pathlib import Path
 import sys
 
-ROOT = Path(__file__).resolve().parents[1]  # points to src/
+ROOT = Path(__file__).resolve().parents[0] 
+print(ROOT,'llllllllllllllllllll') # points to src/
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 

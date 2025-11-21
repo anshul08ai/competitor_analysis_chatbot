@@ -26,11 +26,11 @@ def load_gemini_config():
         return yaml.safe_load(f)
 gemin_config = load_gemini_config()
 
-# PROVIDER=gemin_config["PROVIDE"]
-# DEPLOYMENT_NAME=gemin_config["GEMINI_MODEL"]
+PROVIDER=gemin_config["PROVIDE"]
+DEPLOYMENT_NAME=gemin_config["GEMINI_MODEL"]
 
-PROVIDER=azure_config["PROVIDE"]
-DEPLOYMENT_NAME=azure_config["DEPLOYMENT_NAME"]
+# PROVIDER=azure_config["PROVIDE"]
+# DEPLOYMENT_NAME=azure_config["DEPLOYMENT_NAME"]
 
 load_dotenv()
  
