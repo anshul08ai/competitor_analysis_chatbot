@@ -13,7 +13,7 @@ async def perform_agent_graph_search(query: str,logging_obj):
     try:
         logging_obj.info('Operation started')
         output = compiled.invoke({'query': query})
-        logging_obj.info(f'output {output}')
+        logging_obj.info(f'output came')
         return output
     except Exception as e:
         logging_obj.error(f"Agent graph invocation failed: {str(e)}")
